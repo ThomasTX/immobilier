@@ -13,6 +13,7 @@ Règles :
     (75056, 69123, 13055) en plus des arrondissements ; on l'utilise en priorité,
     sinon on agrège les arrondissements (somme des nombres / somme des dénominateurs).
 """
+import gzip
 import json
 import sys
 import urllib.request
@@ -56,9 +57,30 @@ def find_csv_url() -> str:
     return FALLBACK_URL
 
 
+def gzip_ok(path: Path) -> bool:
+    try:
+        with gzip.open(path, "rb") as f:
+            while f.read(1 << 24):
+                pass
+        return True
+    except (EOFError, OSError):
+        return False
+
+
+def download_checked(url: str, name: str, tries: int = 4) -> Path:
+    """download() + contrôle d'intégrité (le proxy coupe parfois les gros transferts)."""
+    for _ in range(tries):
+        path = download(url, name)
+        if gzip_ok(path):
+            return path
+        print("  fichier tronqué, nouveau téléchargement", file=sys.stderr)
+        path.unlink()
+    raise RuntimeError(f"Téléchargement incomplet: {url}")
+
+
 def main():
     url = find_csv_url()
-    path = download(url, "ssmsi_" + url.rsplit("/", 1)[-1])
+    path = download_checked(url, "ssmsi_" + url.rsplit("/", 1)[-1])
     df = pd.read_csv(path, sep=";", dtype=str, compression="gzip")
     df = df.rename(columns={c: "codgeo" for c in df.columns if c.upper().startswith("CODGEO")})
     annee = int(df["annee"].astype(int).max())

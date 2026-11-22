@@ -241,7 +241,13 @@ export function MapView(p: MapProps) {
         const v = colorValues.values[i];
         map.setFeatureState(
           { source: "communes", id: data.codes[i] },
-          { color: fail ? "#7a7a7a" : paletteColor(v), fail, showFail: settings.showFailing },
+          {
+            // pas de score (aucun critère pondéré) : on ne colore que les communes exclues ;
+            // donnée manquante pour un indicateur : gris clair
+            color: fail ? "#7a7a7a" : isFinite(v) ? paletteColor(v) : colorValues.label === "Score" ? "rgba(0,0,0,0)" : "#d0d0d0",
+            fail,
+            showFail: settings.showFailing,
+          },
         );
       }
     });

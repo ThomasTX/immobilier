@@ -152,7 +152,7 @@ export default function App() {
       return { values: rankColorValues(data, ind.id, pref), label: ind.label, fmt: (i: number) => fmtValue(ind, data.values[ind.id][i]) };
     }
     const v = new Float32Array(evaluation.score.length);
-    for (let i = 0; i < v.length; i++) v[i] = isFinite(evaluation.score[i]) ? evaluation.score[i] / 100 : 0.62;
+    for (let i = 0; i < v.length; i++) v[i] = isFinite(evaluation.score[i]) ? evaluation.score[i] / 100 : NaN;
     return { values: v, label: "Score", fmt: (i: number) => (isFinite(evaluation.score[i]) ? `${Math.round(evaluation.score[i])}` : "—") };
   }, [data, evaluation, cfg.settings.colorBy, travel, cfg.destinations, cfg.filters]);
 
