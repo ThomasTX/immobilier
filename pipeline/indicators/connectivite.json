@@ -1,0 +1,46 @@
+[
+  {
+    "id": "taux_ftth",
+    "label": "Locaux raccordables à la fibre",
+    "group": "Services",
+    "unit": "%",
+    "type": "number",
+    "better": "higher",
+    "description": "Part des locaux (logements et locaux professionnels) de la commune éligibles à la fibre optique jusqu'à l'abonné (FttH) auprès d'au moins un opérateur.",
+    "source": "ARCEP, Ma connexion internet – statistiques communales, 2026T2 (situation au 30/06/2026)",
+    "decimals": 0
+  },
+  {
+    "id": "taux_thd30_filaire",
+    "label": "Très haut débit filaire (≥ 30 Mbit/s)",
+    "group": "Services",
+    "unit": "%",
+    "type": "number",
+    "better": "higher",
+    "description": "Part des locaux éligibles à un débit descendant d'au moins 30 Mbit/s par un réseau filaire (fibre FttH, câble ou cuivre VDSL2), hors technologies radio et satellite.",
+    "source": "ARCEP, Ma connexion internet – statistiques communales, 2026T2 (situation au 30/06/2026)",
+    "decimals": 0
+  },
+  {
+    "id": "apl_medecins",
+    "label": "Accès aux médecins généralistes (APL)",
+    "group": "Services",
+    "unit": "consult./an/hab.",
+    "type": "number",
+    "better": "higher",
+    "description": "Accessibilité potentielle localisée aux médecins généralistes : nombre de consultations ou visites accessibles par an et par habitant standardisé (par l'âge), en tenant compte de l'offre des communes voisines (jusqu'à 20 min) et de la demande. Un APL inférieur à 2,5 correspond généralement à une zone sous-dotée (désert médical).",
+    "source": "DREES, indicateur d'accessibilité potentielle localisée (APL) aux médecins généralistes, millésime 2024",
+    "decimals": 1
+  },
+  {
+    "id": "apl_medecins_65",
+    "label": "Accès aux généralistes de 65 ans ou moins (APL)",
+    "group": "Services",
+    "unit": "consult./an/hab.",
+    "type": "number",
+    "better": "higher",
+    "description": "APL aux médecins généralistes en ne comptant que les médecins de 65 ans ou moins : approche l'offre durable, hors médecins proches de la retraite.",
+    "source": "DREES, indicateur d'accessibilité potentielle localisée (APL) aux médecins généralistes, millésime 2024",
+    "decimals": 1
+  }
+]

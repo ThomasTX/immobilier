@@ -1,0 +1,30 @@
+{
+  "name": "immobilier",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Recherche immobilière multicritère France entière : isochrones train/voiture, données communales open data, suivi d'annonces",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "data": "bash pipeline/run_all.sh"
+  },
+  "dependencies": {
+    "maplibre-gl": "^4.7.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.16",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/topojson-client": "^3.1.5",
+    "@vitejs/plugin-react": "^4.7.0",
+    "mapshaper": "^0.6.121",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  }
+}

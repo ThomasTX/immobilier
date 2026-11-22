@@ -1,0 +1,47 @@
+[
+  {
+    "id": "dist_gare_km",
+    "label": "Distance à la gare la plus proche",
+    "group": "Transports",
+    "unit": "km",
+    "type": "number",
+    "better": "lower",
+    "decimals": 1,
+    "description": "Distance à vol d'oiseau du centre de la commune à la gare ferroviaire (TER, Transilien, RER, Intercités, TGV) la plus proche",
+    "source": "GTFS SNCF + Transilien (20261201)"
+  },
+  {
+    "id": "dist_gare_tgv_km",
+    "label": "Distance à une gare TGV",
+    "group": "Transports",
+    "unit": "km",
+    "type": "number",
+    "better": "lower",
+    "decimals": 1,
+    "description": "Distance à vol d'oiseau à la gare desservie par TGV INOUI / OUIGO / Lyria / ICE la plus proche",
+    "source": "GTFS SNCF (20261201)"
+  },
+  {
+    "id": "freq_gare_10km",
+    "label": "Desserte ferroviaire (départs/jour)",
+    "group": "Transports",
+    "unit": "départs/j",
+    "type": "number",
+    "better": "higher",
+    "decimals": 0,
+    "scale": "log",
+    "description": "Nombre de départs de trains un mardi type depuis la gare la mieux desservie à moins de 10 km",
+    "source": "GTFS SNCF + Transilien (20261201)"
+  },
+  {
+    "id": "dist_aeroport_km",
+    "label": "Distance à un aéroport",
+    "group": "Transports",
+    "unit": "km",
+    "type": "number",
+    "better": "lower",
+    "decimals": 0,
+    "description": "Distance à vol d'oiseau au grand aéroport le plus proche (liste de ~30 aéroports principaux)",
+    "source": "Coordonnées des aéroports"
+  }
+]

@@ -1,0 +1,10 @@
+{
+ "service_date": "20261201",
+ "n_stations": 3684,
+ "n_connections": 169711,
+ "n_footpaths": 1345,
+ "sources": [
+  "SNCF Voyageurs GTFS (TGV, OUIGO, Intercités, TER)",
+  "SNCF Transilien GTFS (RER, Transilien)"
+ ]
+}

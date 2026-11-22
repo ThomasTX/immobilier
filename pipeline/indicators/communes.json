@@ -1,0 +1,38 @@
+[
+  {
+    "id": "population",
+    "label": "Population",
+    "group": "Démographie",
+    "unit": "hab.",
+    "type": "number",
+    "better": null,
+    "description": "Population municipale",
+    "source": "INSEE via geo.api.gouv.fr",
+    "decimals": 0,
+    "scale": "log"
+  },
+  {
+    "id": "densite",
+    "label": "Densité",
+    "group": "Démographie",
+    "unit": "hab./km²",
+    "type": "number",
+    "better": null,
+    "description": "Habitants par km²",
+    "source": "INSEE via geo.api.gouv.fr",
+    "decimals": 0,
+    "scale": "log"
+  },
+  {
+    "id": "surface_km2",
+    "label": "Superficie",
+    "group": "Démographie",
+    "unit": "km²",
+    "type": "number",
+    "better": null,
+    "description": "Superficie de la commune",
+    "source": "IGN via geo.api.gouv.fr",
+    "decimals": 1,
+    "scale": "log"
+  }
+]

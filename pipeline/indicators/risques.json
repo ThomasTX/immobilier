@@ -1,0 +1,157 @@
+[
+  {
+    "id": "risque_inondation",
+    "label": "Risque inondation",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si le risque inondation (débordement, crue torrentielle, ruissellement, remontée de nappe, submersion marine) est recensé pour la commune ou si elle est couverte par un PPR inondation approuvé ou prescrit. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_submersion_marine",
+    "label": "Risque submersion marine",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si l'inondation par submersion marine est recensée ou si la commune est couverte par un PPR littoral / submersion marine approuvé ou prescrit. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_mouvement_terrain",
+    "label": "Risque mouvement de terrain",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si un mouvement de terrain est recensé (effondrement de cavités, chutes de blocs, glissement, recul du trait de côte, avancée dunaire) ou si la commune est couverte par un PPR mouvement de terrain actif. Le retrait-gonflement des argiles est traité à part. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_retrait_argiles",
+    "label": "Retrait-gonflement des argiles",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si les tassements différentiels (retrait-gonflement des argiles) sont recensés, si la commune est couverte par un PPR argiles actif, ou si elle a obtenu au moins un arrêté CatNat « sécheresse » depuis 1982. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02 (risques recensés, PPRN, CatNat)",
+    "decimals": 0
+  },
+  {
+    "id": "risque_feux_foret",
+    "label": "Risque feux de forêt",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si le risque feu de forêt est recensé ou si la commune est couverte par un PPR incendie de forêt actif. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_avalanche",
+    "label": "Risque avalanche",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si le risque avalanche est recensé, si la commune est couverte par un PPR avalanche actif ou si elle a fait l'objet d'un arrêté CatNat avalanche. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_industriel",
+    "label": "Risque industriel",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si le risque industriel (établissements SEVESO notamment : effets thermiques, de surpression, toxiques) est recensé ou si la commune est couverte par un plan de prévention des risques technologiques (PPRT) actif. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_nucleaire",
+    "label": "Risque nucléaire",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si le risque nucléaire est recensé (commune située dans le périmètre d'un plan particulier d'intervention autour d'une installation nucléaire). Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "risque_minier",
+    "label": "Risque minier",
+    "group": "Risques",
+    "unit": "",
+    "type": "boolean",
+    "better": "lower",
+    "description": "1 si un risque minier est recensé (affaissement, effondrement, inondation de terrains miniers, gaz de mine, échauffement de terrils) ou si la commune est couverte par un PPR minier actif. Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02",
+    "decimals": 0
+  },
+  {
+    "id": "zone_sismicite",
+    "label": "Zone de sismicité",
+    "group": "Risques",
+    "unit": "",
+    "type": "category",
+    "better": "lower",
+    "description": "Zonage sismique réglementaire de la France (décret n° 2010-1255, en vigueur depuis le 1er mai 2011) : de 1 (très faible) à 5 (fort, Antilles). Communes fusionnées depuis 2018 : zone la plus élevée des anciennes communes.",
+    "source": "Ministère de la Transition écologique – zonage sismique 2011 (couche communale data.gouv.fr, 2018)",
+    "decimals": 0,
+    "categories": {
+      "1": "Très faible",
+      "2": "Faible",
+      "3": "Modérée",
+      "4": "Moyenne",
+      "5": "Forte"
+    }
+  },
+  {
+    "id": "potentiel_radon",
+    "label": "Potentiel radon",
+    "group": "Risques",
+    "unit": "",
+    "type": "category",
+    "better": "lower",
+    "description": "Potentiel radon de la commune (arrêté du 27 juin 2018) : 1 = faible, 2 = faible avec facteurs géologiques particuliers facilitant le transfert du radon, 3 = significatif. Communes fusionnées : catégorie la plus élevée des anciennes communes.",
+    "source": "IRSN / ASN – « Connaître le potentiel radon de ma commune » (2019, zonage 2018)",
+    "decimals": 0,
+    "categories": {
+      "1": "Faible",
+      "2": "Faible avec facteurs aggravants",
+      "3": "Significatif"
+    }
+  },
+  {
+    "id": "nb_catnat",
+    "label": "Arrêtés CatNat",
+    "group": "Risques",
+    "unit": "arrêtés",
+    "type": "number",
+    "better": "lower",
+    "description": "Nombre de reconnaissances de l'état de catastrophe naturelle depuis 1982 (une par arrêté, type de péril et événement : inondation/coulée de boue, sécheresse, tempête, mouvement de terrain…). Communes fusionnées : somme des anciennes communes.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02 (table CatNat)",
+    "decimals": 0
+  },
+  {
+    "id": "nb_risques",
+    "label": "Nombre de risques recensés",
+    "group": "Risques",
+    "unit": "risques",
+    "type": "number",
+    "better": "lower",
+    "description": "Nombre de familles de risques majeurs recensées pour la commune (inondation, mouvement de terrain, séisme, avalanche, feu de forêt, phénomènes climatiques, radon, industriel, nucléaire, rupture de barrage, transport de matières dangereuses, engins de guerre, minier…). Commune absente de la liste GASPAR des risques recensés (≈ 9 % des communes, notamment Puy-de-Dôme, Drôme, Somme, Oise, Aisne) : valeur inconnue sauf si un PPR ou un arrêté CatNat l'atteste.",
+    "source": "Géorisques – base GASPAR (DGPR), export du 2026-11-02 (risques recensés)",
+    "decimals": 0
+  }
+]

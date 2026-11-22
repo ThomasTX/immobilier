@@ -1,0 +1,116 @@
+[
+  {
+    "id": "prix_m2_maison",
+    "label": "Prix médian au m² (maisons)",
+    "group": "Immobilier",
+    "unit": "€/m²",
+    "type": "number",
+    "better": "lower",
+    "decimals": 0,
+    "scale": "log",
+    "source": "DVF (DGFiP) via « Statistiques DVF » Etalab, ventes juil. 2021 – juin 2026",
+    "description": "Prix de vente médian au m² des maisons (juil. 2021 – juin 2026). Vide si moins de 5 ventes."
+  },
+  {
+    "id": "prix_m2_appart",
+    "label": "Prix médian au m² (appartements)",
+    "group": "Immobilier",
+    "unit": "€/m²",
+    "type": "number",
+    "better": "lower",
+    "decimals": 0,
+    "scale": "log",
+    "source": "DVF (DGFiP) via « Statistiques DVF » Etalab, ventes juil. 2021 – juin 2026",
+    "description": "Prix de vente médian au m² des appartements (juil. 2021 – juin 2026). Vide si moins de 5 ventes."
+  },
+  {
+    "id": "nb_ventes_maison",
+    "label": "Ventes de maisons (5 ans)",
+    "group": "Immobilier",
+    "unit": "ventes",
+    "type": "number",
+    "better": null,
+    "decimals": 0,
+    "scale": "log",
+    "source": "DVF (DGFiP) via « Statistiques DVF » Etalab, ventes juil. 2021 – juin 2026",
+    "description": "Nombre de ventes de maisons enregistrées dans DVF (juil. 2021 – juin 2026). Hors Alsace-Moselle et Mayotte."
+  },
+  {
+    "id": "nb_ventes_appart",
+    "label": "Ventes d'appartements (5 ans)",
+    "group": "Immobilier",
+    "unit": "ventes",
+    "type": "number",
+    "better": null,
+    "decimals": 0,
+    "scale": "log",
+    "source": "DVF (DGFiP) via « Statistiques DVF » Etalab, ventes juil. 2021 – juin 2026",
+    "description": "Nombre de ventes d'appartements enregistrées dans DVF (juil. 2021 – juin 2026). Hors Alsace-Moselle et Mayotte."
+  },
+  {
+    "id": "evol_prix_m2",
+    "label": "Évolution du prix au m² (4 ans)",
+    "group": "Immobilier",
+    "unit": "%",
+    "type": "number",
+    "better": null,
+    "decimals": 1,
+    "source": "DVF (DGFiP) via « Statistiques DVF » mensuelles Etalab (juil. 2021 – juin 2026)",
+    "description": "Variation du prix au m² entre juil. 2021 – juin 2022 et juil. 2025 – juin 2026 (médianes mensuelles pondérées), maisons et appartements combinés à composition constante. Exige au moins 20 ventes par type et par période."
+  },
+  {
+    "id": "loyer_m2_appart",
+    "label": "Loyer d'annonce au m² (appartement)",
+    "group": "Immobilier",
+    "unit": "€/m²",
+    "type": "number",
+    "better": "lower",
+    "decimals": 1,
+    "source": "Carte des loyers 2025 (ANIL/DHUP), estimations ANIL à partir des données SeLoger et leboncoin",
+    "description": "Loyer d'annonce estimé, charges comprises, d'un appartement non meublé type de 52 m² (T3 2025). Estimé à l'échelle d'un regroupement de communes quand les annonces sont trop peu nombreuses."
+  },
+  {
+    "id": "loyer_m2_maison",
+    "label": "Loyer d'annonce au m² (maison)",
+    "group": "Immobilier",
+    "unit": "€/m²",
+    "type": "number",
+    "better": "lower",
+    "decimals": 1,
+    "source": "Carte des loyers 2025 (ANIL/DHUP), estimations ANIL à partir des données SeLoger et leboncoin",
+    "description": "Loyer d'annonce estimé, charges comprises, d'une maison non meublée type de 92 m² (T3 2025). Estimé à l'échelle d'un regroupement de communes quand les annonces sont trop peu nombreuses."
+  },
+  {
+    "id": "rendement_brut_appart",
+    "label": "Rendement locatif brut (appartement)",
+    "group": "Immobilier",
+    "unit": "%",
+    "type": "number",
+    "better": "higher",
+    "decimals": 1,
+    "source": "Calcul : Carte des loyers 2025 et DVF (juil. 2021 – juin 2026)",
+    "description": "Estimation : loyer d'annonce au m² × 12 / prix médian de vente au m² des appartements. Charges comprises, avant taxe foncière et vacance. Vide si moins de 10 ventes."
+  },
+  {
+    "id": "taux_tfb",
+    "label": "Taux de taxe foncière (bâti)",
+    "group": "Fiscalité",
+    "unit": "%",
+    "type": "number",
+    "better": "lower",
+    "decimals": 2,
+    "source": "DGFiP, « Fiscalité locale des particuliers », exercice 2025",
+    "description": "Taux global de taxe foncière sur les propriétés bâties : commune + intercommunalité + taxes spéciales et GEMAPI. À appliquer à la valeur locative cadastrale."
+  },
+  {
+    "id": "taux_tfb_commune",
+    "label": "Taux communal de taxe foncière (bâti)",
+    "group": "Fiscalité",
+    "unit": "%",
+    "type": "number",
+    "better": "lower",
+    "decimals": 2,
+    "source": "DGFiP, « Fiscalité locale des particuliers », exercice 2025",
+    "description": "Taux voté par la commune pour la taxe foncière sur les propriétés bâties (part communale seule)."
+  }
+]
