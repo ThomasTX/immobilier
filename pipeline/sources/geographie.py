@@ -1,8 +1,8 @@
 """Cadre géographique des communes : altitude, littoral, distance à la mer, montagne, climat.
 
 Sources :
-  - Altitude : API altimétrie de la Géoplateforme IGN (RGE ALTI / MNT mondial), au centre de la commune
-    (coordonnées de pipeline/out/communes.csv)
+  - Altitude : API altimétrie de la Géoplateforme IGN (RGE ALTI / MNT mondial), à la mairie (chef-lieu)
+    (coordonnées geo.api.gouv.fr ; centroïde de pipeline/out/communes.csv à défaut)
   - Loi Littoral : classement des communes (DGALN-SIDAUH), Observatoire des territoires (ANCT), COG 2026
   - Trait de côte : Natural Earth 10m coastline v5.1.2 (domaine public)
   - Zone de montagne : communes concernées par la loi Montagne de 1985 (DGALN-SIDAUH), COG 2022
@@ -38,6 +38,16 @@ LITTORAL_URL = ("https://www.observatoire-des-territoires.gouv.fr/outils/cartogr
 COAST_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_coastline.geojson"
 MONTAGNE_URL = ("https://static.data.gouv.fr/resources/communes-de-la-loi-montagne-au-code-officiel-geographique-"
                 "cog-2020-2022/20220323-152301/dgaln-icapp-sidauh-opendata-loi-montagne-1985-cog-2022.xlsx")
+# Point de référence : mairie (chef-lieu, là où se concentre l'habitat) plutôt que le centroïde du
+# territoire communal (ex. Chamonix : centroïde à ~1 860 m, mairie à ~1 035 m).
+MAIRIE_URL = "https://geo.api.gouv.fr/communes?fields=code,mairie,centre&format=json"
+# Estuaires que le trait de côte Natural Earth remonte loin à l'intérieur des terres : segments retirés
+# en amont de l'embouchure (lon_min, lon_max, lat_min, lat_max).
+ESTUAIRES = {
+    "Gironde (amont Royan / pointe de Grave)": (-1.00, -0.30, 44.85, 45.60),
+    "Loire (amont Saint-Nazaire / Mindin)": (-2.12, -1.40, 47.18, 47.35),
+    "Seine (amont Le Havre / Honfleur)": (0.25, 0.90, 49.35, 49.55),
+}
 COG_URL = "https://cdn.jsdelivr.net/npm/@etalab/decoupage-administratif@6.0.0/data/communes.json"
 FICHES_LIST_URL = "https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/REF_STATION/liste_fiches_clim.geojson"
 FICHE_URL = "https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/REF_STATION/FICHECLIM_{num}.data"
@@ -182,6 +192,10 @@ def distance_mer(df: pd.DataFrame) -> pd.Series:
             if len(a) >= 2:
                 segs.append(np.c_[a[:-1], a[1:]])
     S = np.vstack(segs)  # lon1, lat1, lon2, lat2
+    for x0, x1, y0, y1 in ESTUAIRES.values():
+        inside = ((S[:, 0] > x0) & (S[:, 0] < x1) & (S[:, 1] > y0) & (S[:, 1] < y1)
+                  & (S[:, 2] > x0) & (S[:, 2] < x1) & (S[:, 3] > y0) & (S[:, 3] < y1))
+        S = S[~inside]
     out = pd.Series(np.nan, index=df.index)
     ok = df["lat"].notna() & df["lon"].notna()
     # un groupe par territoire (métropole, chaque DROM/COM), segments dans l'emprise ± 7°
@@ -318,6 +332,14 @@ def main():
     df = pd.DataFrame(load_communes()).set_index("code_insee")
     df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
     df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
+    mairies = {c["code"]: c["mairie"]["coordinates"]
+               for c in json.loads(download(MAIRIE_URL, "geoapi_communes_mairie.json").read_text(encoding="utf-8"))
+               if c.get("mairie")}
+    m = pd.DataFrame.from_dict(mairies, orient="index", columns=["mlon", "mlat"]).reindex(df.index)
+    has = m["mlat"].notna()
+    print(f"  point de référence : mairie pour {has.mean():.1%} des communes, centroïde sinon", file=sys.stderr)
+    df.loc[has, "lat"] = m.loc[has, "mlat"].round(5)
+    df.loc[has, "lon"] = m.loc[has, "mlon"].round(5)
 
     df["altitude"] = altitudes(df)
     df["commune_littorale"] = loi_littoral(df, to_current)
@@ -326,7 +348,7 @@ def main():
 
     st = climat_stations()
     df["temp_moy"] = idw(df, st, "temp", k=3, max_km=60, alt_correct=True)
-    df["precip_mm"] = idw(df, st, "precip", k=3, max_km=60)
+    df["precip_mm"] = idw(df, st, "precip", k=3, max_km=80)
     df["ensoleillement_h"] = idw(df, st, "soleil", k=3, max_km=150)
 
     cols = ["altitude", "commune_littorale", "distance_mer_km", "zone_montagne",
@@ -348,8 +370,9 @@ def main():
     G = "Cadre de vie"
     write_indicators("geographie", [
         {"id": "altitude", "label": "Altitude", "group": G, "unit": "m", "type": "number", "better": None,
-         "description": "Altitude du centre de la commune (point central de geo.api.gouv.fr), lue sur le modèle "
-                        "numérique de terrain RGE ALTI de l'IGN (MNT mondial hors couverture).",
+         "description": "Altitude de la mairie (chef-lieu) de la commune, ou à défaut du centroïde du territoire "
+                        "communal, lue sur le modèle numérique de terrain RGE ALTI de l'IGN (MNT mondial hors "
+                        "couverture). Coordonnées des mairies : geo.api.gouv.fr.",
          "source": "IGN – Géoplateforme, service d'altimétrie (RGE ALTI®), " + time.strftime("%Y"),
          "decimals": 0},
         {"id": "commune_littorale", "label": "Commune littorale", "group": G, "unit": "", "type": "boolean",
@@ -361,10 +384,10 @@ def main():
          "decimals": 0},
         {"id": "distance_mer_km", "label": "Distance à la mer", "group": G, "unit": "km", "type": "number",
          "better": "lower",
-         "description": "Distance à vol d'oiseau entre le centre de la commune et le trait de côte maritime le plus "
-                        "proche (lacs exclus ; estuaires inclus jusqu'à la limite retenue par Natural Earth). "
-                        "Trait de côte au 1:10 000 000 : précision de l'ordre du kilomètre, 0 à quelques km pour les "
-                        "communes côtières.",
+         "description": "Distance à vol d'oiseau entre la mairie (chef-lieu) de la commune et le trait de côte "
+                        "maritime le plus proche, y compris côtes étrangères (lacs exclus ; estuaires de la Gironde, "
+                        "de la Loire et de la Seine coupés à leur embouchure). Trait de côte au 1:10 000 000 : "
+                        "précision de l'ordre du kilomètre, 0 à quelques km pour les communes côtières.",
          "source": "Natural Earth 10m coastline v5.1.2 (domaine public) ; calcul pipeline",
          "decimals": 1, "scale": "log"},
         {"id": "zone_montagne", "label": "Zone de montagne", "group": G, "unit": "", "type": "boolean",
@@ -375,14 +398,14 @@ def main():
          "source": "DGALN-SIDAUH – communes de la loi Montagne au COG 2022 (data.gouv.fr)", "decimals": 0},
         {"id": "temp_moy", "label": "Température moyenne", "group": G, "unit": "°C", "type": "number",
          "better": None,
-         "description": "Température moyenne annuelle (normale) estimée au centre de la commune : moyenne pondérée "
+         "description": "Température moyenne annuelle (normale) estimée à la mairie de la commune : moyenne pondérée "
                         "(inverse du carré de la distance) des 3 stations Météo-France les plus proches dans un "
                         "rayon de 60 km, ramenées à l'altitude de la commune (gradient −6,5 °C/km).",
          "source": mf, "decimals": 1},
         {"id": "precip_mm", "label": "Précipitations annuelles", "group": G, "unit": "mm", "type": "number",
          "better": None,
          "description": "Cumul annuel moyen de précipitations (normale) : moyenne pondérée (inverse du carré de la "
-                        "distance) des 3 stations Météo-France les plus proches dans un rayon de 60 km.",
+                        "distance) des 3 stations Météo-France les plus proches dans un rayon de 80 km.",
          "source": mf, "decimals": 0},
         {"id": "ensoleillement_h", "label": "Ensoleillement annuel", "group": G, "unit": "h/an", "type": "number",
          "better": "higher",

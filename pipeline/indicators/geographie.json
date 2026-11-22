@@ -1,0 +1,80 @@
+[
+  {
+    "id": "altitude",
+    "label": "Altitude",
+    "group": "Cadre de vie",
+    "unit": "m",
+    "type": "number",
+    "better": null,
+    "description": "Altitude de la mairie (chef-lieu) de la commune, ou à défaut du centroïde du territoire communal, lue sur le modèle numérique de terrain RGE ALTI de l'IGN (MNT mondial hors couverture). Coordonnées des mairies : geo.api.gouv.fr.",
+    "source": "IGN – Géoplateforme, service d'altimétrie (RGE ALTI®), 2026",
+    "decimals": 0
+  },
+  {
+    "id": "commune_littorale",
+    "label": "Commune littorale",
+    "group": "Cadre de vie",
+    "unit": "",
+    "type": "boolean",
+    "better": null,
+    "description": "1 si la commune est soumise (en tout ou partie) à la loi Littoral du 3 janvier 1986 : riveraine de la mer, d'un estuaire, d'un étang salé ou d'un plan d'eau intérieur de plus de 1 000 ha (ex. lac d'Annecy).",
+    "source": "DGALN-SIDAUH via Observatoire des territoires (ANCT) – classement loi Littoral, COG 2026",
+    "decimals": 0
+  },
+  {
+    "id": "distance_mer_km",
+    "label": "Distance à la mer",
+    "group": "Cadre de vie",
+    "unit": "km",
+    "type": "number",
+    "better": "lower",
+    "description": "Distance à vol d'oiseau entre la mairie (chef-lieu) de la commune et le trait de côte maritime le plus proche, y compris côtes étrangères (lacs exclus ; estuaires de la Gironde, de la Loire et de la Seine coupés à leur embouchure). Trait de côte au 1:10 000 000 : précision de l'ordre du kilomètre, 0 à quelques km pour les communes côtières.",
+    "source": "Natural Earth 10m coastline v5.1.2 (domaine public) ; calcul pipeline",
+    "decimals": 1,
+    "scale": "log"
+  },
+  {
+    "id": "zone_montagne",
+    "label": "Zone de montagne",
+    "group": "Cadre de vie",
+    "unit": "",
+    "type": "boolean",
+    "better": null,
+    "description": "1 si la commune est classée (en tout ou partie) en zone de montagne au titre de la loi Montagne du 9 janvier 1985. Métropole uniquement (vide outre-mer). Les communes nouvelles créées depuis 2022 sont classées si l'une de leurs anciennes communes l'était.",
+    "source": "DGALN-SIDAUH – communes de la loi Montagne au COG 2022 (data.gouv.fr)",
+    "decimals": 0
+  },
+  {
+    "id": "temp_moy",
+    "label": "Température moyenne",
+    "group": "Cadre de vie",
+    "unit": "°C",
+    "type": "number",
+    "better": null,
+    "description": "Température moyenne annuelle (normale) estimée à la mairie de la commune : moyenne pondérée (inverse du carré de la distance) des 3 stations Météo-France les plus proches dans un rayon de 60 km, ramenées à l'altitude de la commune (gradient −6,5 °C/km).",
+    "source": "Météo-France – fiches climatologiques des stations (statistiques 1991-2020, ou période plus courte pour les stations récentes), édition 11/2026",
+    "decimals": 1
+  },
+  {
+    "id": "precip_mm",
+    "label": "Précipitations annuelles",
+    "group": "Cadre de vie",
+    "unit": "mm",
+    "type": "number",
+    "better": null,
+    "description": "Cumul annuel moyen de précipitations (normale) : moyenne pondérée (inverse du carré de la distance) des 3 stations Météo-France les plus proches dans un rayon de 80 km.",
+    "source": "Météo-France – fiches climatologiques des stations (statistiques 1991-2020, ou période plus courte pour les stations récentes), édition 11/2026",
+    "decimals": 0
+  },
+  {
+    "id": "ensoleillement_h",
+    "label": "Ensoleillement annuel",
+    "group": "Cadre de vie",
+    "unit": "h/an",
+    "type": "number",
+    "better": "higher",
+    "description": "Durée annuelle moyenne d'insolation : moyenne pondérée (inverse du carré de la distance) des 3 stations Météo-France mesurant l'insolation les plus proches dans un rayon de 150 km (réseau peu dense : valeur régionale indicative).",
+    "source": "Météo-France – fiches climatologiques des stations (statistiques 1991-2020, ou période plus courte pour les stations récentes), édition 11/2026",
+    "decimals": 0
+  }
+]

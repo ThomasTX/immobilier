@@ -286,7 +286,8 @@ def main():
          "better": "lower",
          "description": "Nombre de reconnaissances de l'état de catastrophe naturelle depuis 1982 (une par arrêté, "
                         "type de péril et événement : inondation/coulée de boue, sécheresse, tempête, mouvement de "
-                        "terrain…). Communes fusionnées : somme des anciennes communes.",
+                        "terrain…). Communes fusionnées : reconnaissances des anciennes communes cumulées, un même "
+                        "arrêté pour un même péril et un même événement n'étant compté qu'une fois.",
          "source": src_gaspar + " (table CatNat)", "decimals": 0},
         {"id": "nb_risques", "label": "Nombre de risques recensés", "group": "Risques", "unit": "risques",
          "type": "number", "better": "lower",
