@@ -10,7 +10,7 @@ Une application web qui croise **tous vos critères** pour trouver les communes,
 - **Plus de 60 critères par commune**, tous filtrables (min/max, oui/non, catégories) et pondérables dans un score :
   - prix DVF au m² (maisons, appartements) et leur évolution ;
   - loyers, rendement locatif, taxe foncière ;
-  - location courte durée (Airbnb, via Inside Airbnb ou AirDNA) ;
+  - location courte durée (Airbnb, via Inside Airbnb) ;
   - gares, desserte, aéroports ;
   - écoles, médecins, urgences, commerces, fibre, accès aux soins (APL) ;
   - risques (inondation, argiles, séismes, radon, catastrophes naturelles…) ;
@@ -52,7 +52,7 @@ Le pipeline télécharge les sources open data (cache dans `pipeline/.cache/`). 
 |---|---|---|
 | `sources/communes.py` | référentiel, population, densité | geo.api.gouv.fr |
 | `sources/immobilier.py` | prix DVF, évolution, loyers, rendement, taxe foncière | Etalab DVF, ANIL, DGFiP |
-| `sources/location_courte.py` | location courte durée (prix/nuit, occupation, revenus) | AirDNA (clé ou exports), Inside Airbnb |
+| `sources/location_courte.py` | location courte durée (prix/nuit, occupation, revenus) | Inside Airbnb (CC BY 4.0) |
 | `sources/equipements.py` | écoles, santé, commerces, services et distances | INSEE BPE |
 | `sources/connectivite.py` | fibre, APL médecins | ARCEP, DREES |
 | `sources/risques.py` | risques naturels et technologiques, CatNat, sismicité, radon | Géorisques |
@@ -64,14 +64,9 @@ Le pipeline télécharge les sources open data (cache dans `pipeline/.cache/`). 
 
 Pour ajouter un critère, il suffit d'un script `pipeline/sources/<nom>.py` qui écrit `pipeline/out/<nom>.csv` (colonne `code_insee` + indicateurs) et `pipeline/indicators/<nom>.json` (métadonnées, voir `pipeline/common.py`). L'interface génère automatiquement filtres, pondération, coloration et fiche.
 
-### AirDNA
+### Location courte durée
 
-AirDNA ne publie pas de données ouvertes. Deux façons de l'utiliser :
-
-1. **API Enterprise** (abonnement payant) : `AIRDNA_API_KEY=... python3 pipeline/sources/location_courte.py`. La clé reste dans votre variable d'environnement ; elle n'est jamais écrite dans le dépôt.
-2. **Exports** : déposez des CSV dans `pipeline/manual/airdna/` (format décrit dans son README).
-
-Sans AirDNA, l'app utilise les données gratuites [Inside Airbnb](https://insideairbnb.com) (CC BY 4.0), disponibles pour quelques grandes zones françaises.
+Les indicateurs Airbnb (prix par nuit, occupation estimée, revenu annuel, rendement courte durée) viennent d'[Inside Airbnb](https://insideairbnb.com) (CC BY 4.0). Ils ne couvrent que les zones françaises suivies par ce projet ; ailleurs, la valeur est vide.
 
 ## Limites à connaître
 
