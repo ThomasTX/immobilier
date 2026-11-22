@@ -43,8 +43,12 @@ def download(url: str, name: str | None = None, max_age_days: float = 30) -> Pat
     for attempt in range(4):
         try:
             with urllib.request.urlopen(req, timeout=300) as r, open(tmp, "wb") as f:
+                expected = r.headers.get("Content-Length")
                 while chunk := r.read(1 << 20):
                     f.write(chunk)
+            # détecte les transferts coupés silencieusement (proxy, serveur)
+            if expected and tmp.stat().st_size != int(expected):
+                raise IOError(f"transfert incomplet ({tmp.stat().st_size}/{expected} octets)")
             tmp.replace(path)
             return path
         except Exception as e:  # noqa: BLE001

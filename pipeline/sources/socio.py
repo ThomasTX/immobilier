@@ -1,122 +1,151 @@
-"""Indicateurs socio-démographiques communaux (INSEE, base du dossier complet).
+"""Indicateurs socio-démographiques communaux (INSEE : recensement + Filosofi).
 
-Source unique : « Base du dossier complet » de l'INSEE (https://www.insee.fr/fr/statistiques/5359146),
-qui rassemble par commune les résultats du recensement (3 millésimes) et de Filosofi.
-Les millésimes sont détectés automatiquement à partir des noms de colonnes
-(P{aa}_POP, MED{aa}, …) pour que le script reste valable à la prochaine édition.
+Source : API Melodi de l'INSEE (https://api.insee.fr/melodi, accès libre sans clé),
+qui expose les jeux de données du « dossier complet » communal. On interroge
+directement l'API de données avec des filtres (quelques centaines de Ko compressés
+par requête) plutôt que les fichiers complets (100 Mo à 700 Mo, que le serveur
+coupe au bout de ~5 min).
 
-Paris/Lyon/Marseille : la base est communale (communes entières) ; si des
-arrondissements apparaissent, les taux sont recalculés à partir des
-numérateurs/dénominateurs agrégés (Filosofi : moyenne pondérée par la population,
-la médiane n'étant pas additive).
+Jeux utilisés (géographie au 01/01/2026) :
+  - DS_FILOSOFI_CC          : niveau de vie médian, taux de pauvreté (Filosofi)
+  - DS_RP_SERIE_HISTORIQUE  : population (2 recensements), logements par catégorie
+  - DS_RP_POPULATION_PRINC  : population par âge
+  - DS_RP_EMPLOI_LR_PRINC   : actifs et chômeurs de 15-64 ans
+  - DS_RP_LOGEMENT_PRINC    : résidences principales par statut d'occupation
+
+Paris/Lyon/Marseille : l'API fournit la commune entière (niveau COM) ; les
+arrondissements (niveau ARM) ne sont pas demandés. Si une commune parente
+manquait, les numérateurs/dénominateurs seraient agrégés via normalize_insee.
 """
-import re
+import gzip
+import json
 import sys
-import zipfile
+import time
 from pathlib import Path
 
 import pandas as pd
+import requests
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from common import download, load_communes, normalize_insee, write_csv, write_indicators  # noqa: E402
+from common import CACHE, UA, load_communes, normalize_insee, write_csv, write_indicators  # noqa: E402
 
-URL = "https://www.insee.fr/fr/statistiques/fichier/5359146/dossier_complet_csv.zip"
-CACHE_NAME = "insee_dossier_complet_csv.zip"
-
-
-def zip_ok(path: Path) -> bool:
-    try:
-        with zipfile.ZipFile(path) as z:
-            return bool(z.namelist())
-    except (zipfile.BadZipFile, OSError):
-        return False
+API = "https://api.insee.fr/melodi/data/"
+RP = "2023"       # dernier recensement communal diffusé (édition 2026)
+RP_OLD = "2017"   # recensement de référence pour l'évolution (~5-6 ans avant)
+FILOSOFI = "2023"
+PAGE = 100_000    # maximum accepté par l'API
 
 
-def download_checked(url: str, name: str, tries: int = 4) -> Path:
-    """download() + contrôle d'intégrité (le proxy coupe parfois les gros transferts)."""
-    for _ in range(tries):
-        path = download(url, name)
-        if zip_ok(path):
-            return path
-        print("  archive tronquée, nouveau téléchargement", file=sys.stderr)
-        path.unlink()
-    raise RuntimeError(f"Téléchargement incomplet: {url}")
+def melodi(ds: str, max_age_days: float = 30, **filters) -> pd.DataFrame:
+    """Observations d'un jeu Melodi au niveau communal, avec cache JSON gzip.
+
+    filters : dimension -> valeur ou liste de valeurs. Retourne un DataFrame
+    (code, dimensions filtrées multi-valeurs, value, conf)."""
+    params = [("GEO", "COM")]
+    for k, v in filters.items():
+        for x in (v if isinstance(v, (list, tuple)) else [v]):
+            params.append((k, x))
+    label = "_".join(f"{k}-{v}" for k, v in params[1:])
+    key = f"melodi_{ds}_{label}.json.gz"
+    path = CACHE / key
+    if path.exists() and (time.time() - path.stat().st_mtime) < max_age_days * 86400:
+        obs = json.loads(gzip.decompress(path.read_bytes()))
+    else:
+        obs, page = [], 1
+        while True:
+            q = params + [("maxResult", PAGE), ("page", page)]
+            for attempt in range(5):
+                try:
+                    print(f"  ↓ Melodi {ds} {label} p{page}", file=sys.stderr)
+                    r = requests.get(API + ds, params=q, timeout=300, headers={"User-Agent": UA})
+                    if r.status_code == 429:  # limite de 30 requêtes/min sans clé
+                        time.sleep(30)
+                        continue
+                    r.raise_for_status()
+                    batch = r.json().get("observations", [])
+                    break
+                except (requests.RequestException, ValueError) as e:
+                    print(f"    tentative {attempt + 1} échouée: {e}", file=sys.stderr)
+                    time.sleep(2 ** attempt * 3)
+            else:
+                raise RuntimeError(f"API Melodi indisponible: {ds}")
+            obs += batch
+            if len(batch) < PAGE:
+                break
+            page += 1
+        if not obs:
+            raise RuntimeError(f"aucune observation: {ds} {filters}")
+        tmp = path.with_suffix(".part")
+        tmp.write_bytes(gzip.compress(json.dumps(obs).encode()))
+        tmp.replace(path)
+    multi = [k for k, v in filters.items() if isinstance(v, (list, tuple))]
+    rows = []
+    for o in obs:
+        d = o["dimensions"]
+        m = o.get("measures", {}).get("OBS_VALUE_NIVEAU", {})
+        rows.append({
+            "code": d["GEO"].rsplit("-", 1)[-1],
+            **{k: d.get(k) for k in multi},
+            "value": m.get("value"),
+            "conf": (o.get("attributes") or {}).get("CONF_STATUS"),
+        })
+    df = pd.DataFrame(rows)
+    df["value"] = pd.to_numeric(df["value"], errors="coerce")
+    df.loc[df["conf"] == "C", "value"] = float("nan")  # secret statistique
+    return df
 
 
-def last_year(cols, pattern: str) -> str:
-    """Plus grand suffixe d'année (2 chiffres) pour un motif type r'P(\\d\\d)_POP'."""
-    ys = sorted({m.group(1) for c in cols if (m := re.fullmatch(pattern, c))})
-    if not ys:
-        raise RuntimeError(f"aucune colonne {pattern}")
-    return ys[-1]
+def wide(df: pd.DataFrame, dim: str, names: dict) -> pd.DataFrame:
+    """Pivot code x modalité -> colonnes renommées."""
+    w = df.pivot_table(index="code", columns=dim, values="value", aggfunc="first")
+    return w.rename(columns=names)[list(names.values())]
 
 
 def main():
-    path = download_checked(URL, CACHE_NAME, )
-    with zipfile.ZipFile(path) as z:
-        names = [n for n in z.namelist() if n.lower().endswith(".csv")]
-        data_name = max(names, key=lambda n: z.getinfo(n).file_size)  # le fichier de données est le plus gros
-        with z.open(data_name) as f:
-            header = f.readline().decode("utf-8").strip().split(";")
-        header = [h.strip('"') for h in header]
+    fi = wide(melodi("DS_FILOSOFI_CC", TIME_PERIOD=FILOSOFI, FILOSOFI_MEASURE=["MED_SL", "PR_MD60"]),
+              "FILOSOFI_MEASURE", {"MED_SL": "med", "PR_MD60": "tp60"})
+    pop = wide(melodi("DS_RP_SERIE_HISTORIQUE", RP_MEASURE="POP", TIME_PERIOD=[RP_OLD, RP]),
+               "TIME_PERIOD", {RP_OLD: "pop_old", RP: "pop"})
+    log = wide(melodi("DS_RP_SERIE_HISTORIQUE", RP_MEASURE="DWELLINGS", TIME_PERIOD=RP,
+                      OCS=["_T", "DW_SEC_DW_OCC", "DW_VAC"]),
+               "OCS", {"_T": "log", "DW_SEC_DW_OCC": "rsec", "DW_VAC": "vac"})
+    age = wide(melodi("DS_RP_POPULATION_PRINC", RP_MEASURE="POP", TIME_PERIOD=RP, SEX="_T",
+                      AGE=["_T", "Y_GE65"]),
+               "AGE", {"_T": "pop_age", "Y_GE65": "pop65"})
+    emp = wide(melodi("DS_RP_EMPLOI_LR_PRINC", RP_MEASURE="POP", TIME_PERIOD=RP, SEX="_T", AGE="Y15T64",
+                      EDUC="_T", EMPSTA_ENQ=["1T2", "2"]),
+               "EMPSTA_ENQ", {"1T2": "act", "2": "chom"})
+    stat = wide(melodi("DS_RP_LOGEMENT_PRINC", RP_MEASURE="DWELLINGS", TIME_PERIOD=RP, OCS="DW_MAIN",
+                       TSH=["_T", "100"], CARS="_T", BUILD_END="_T", NRG_SRC="_T", TDW="_T",
+                       CARPARK="_T", NOR="_T", L_STAY="_T"),
+                "TSH", {"_T": "rp", "100": "prop"})
 
-        rp = last_year(header, r"P(\d\d)_POP")
-        rp_years = sorted({m.group(1) for c in header if (m := re.fullmatch(r"P(\d\d)_POP", c))})
-        # recensement précédent le plus proche de 5 ans avant le dernier
-        rp_old = min((y for y in rp_years if y != rp), key=lambda y: abs(int(rp) - int(y) - 5))
-        fi = last_year(header, r"MED(\d\d)")
-        need = {
-            "pop": f"P{rp}_POP", "pop_old": f"P{rp_old}_POP", "pop65": f"P{rp}_POP65P",
-            "act": f"P{rp}_ACT1564", "chom": f"P{rp}_CHOM1564",
-            "log": f"P{rp}_LOG", "rsec": f"P{rp}_RSECOCC", "vac": f"P{rp}_LOGVAC",
-            "rp": f"P{rp}_RP", "prop": f"P{rp}_RP_PROP",
-            "med": f"MED{fi}", "tp60": f"TP60{fi}",
-        }
-        missing = [v for v in need.values() if v not in header]
-        if missing:
-            raise RuntimeError(f"colonnes absentes: {missing}")
-        print(f"  {data_name}: RP 20{rp} (évolution depuis 20{rp_old}), Filosofi 20{fi}", file=sys.stderr)
-        with z.open(data_name) as f:
-            df = pd.read_csv(f, sep=";", dtype=str, usecols=["CODGEO", *need.values()])
+    df = pop.join([log, age, emp, stat], how="outer").join(fi, how="outer")
+    df.index = df.index.map(normalize_insee)
+    # Filosofi : médiane / taux non additifs -> moyenne pondérée par la population
+    df["med_x"] = df["med"] * df["pop"].fillna(1)
+    df["tp_x"] = df["tp60"] * df["pop"].fillna(1)
+    df["pop_fi"] = df["pop"].fillna(1).where(df["med"].notna())
+    df["pop_tp"] = df["pop"].fillna(1).where(df["tp60"].notna())
+    g = df.drop(columns=["med", "tp60"]).groupby(level=0).sum(min_count=1)
 
-    for k, c in need.items():
-        df[k] = pd.to_numeric(df[c].str.replace(",", ".", regex=False), errors="coerce")
-    df["code_insee"] = df["CODGEO"].map(normalize_insee)
+    def pct(num, den):
+        return (g[num] / g[den] * 100).where(g[den] > 0)
 
-    # Agrégation (utile seulement si des arrondissements sont présents)
-    df["med_x_pop"] = df["med"] * df["pop"]
-    df["tp60_x_pop"] = df["tp60"] * df["pop"]
-    df["pop_fi"] = df["pop"].where(df["med"].notna())
-    df["pop_tp"] = df["pop"].where(df["tp60"].notna())
-    add = ["pop", "pop_old", "pop65", "act", "chom", "log", "rsec", "vac", "rp", "prop",
-           "med_x_pop", "tp60_x_pop", "pop_fi", "pop_tp"]
-    multi = df["code_insee"].duplicated(keep=False)
-    if multi.any():
-        agg = df[multi].groupby("code_insee")[add].sum(min_count=1).reset_index()
-        single = df[~multi]
-        single = single.assign(med_x_pop=single["med"], pop_fi=1.0, tp60_x_pop=single["tp60"], pop_tp=1.0)
-        g = pd.concat([single[["code_insee", *add]], agg], ignore_index=True)
-    else:
-        g = df.assign(med_x_pop=df["med"], pop_fi=1.0, tp60_x_pop=df["tp60"], pop_tp=1.0)[["code_insee", *add]]
-    g = g.set_index("code_insee")
-
-    def ratio(num, den, k=100.0):
-        return (g[num] / g[den] * k).where(g[den] > 0)
-
-    n_years = int(rp) - int(rp_old)
+    n_years = int(RP) - int(RP_OLD)
     out = pd.DataFrame(index=g.index)
-    out["revenu_median"] = (g["med_x_pop"] / g["pop_fi"]).where(g["pop_fi"] > 0)
-    out["taux_pauvrete"] = (g["tp60_x_pop"] / g["pop_tp"]).where(g["pop_tp"] > 0)
-    out["taux_chomage"] = ratio("chom", "act")
-    out["part_residences_secondaires"] = ratio("rsec", "log")
-    out["part_logements_vacants"] = ratio("vac", "log")
-    out["part_proprietaires"] = ratio("prop", "rp")
-    out["part_plus_65"] = ratio("pop65", "pop")
+    out["revenu_median"] = (g["med_x"] / g["pop_fi"]).where(g["pop_fi"] > 0)
+    out["taux_pauvrete"] = (g["tp_x"] / g["pop_tp"]).where(g["pop_tp"] > 0)
+    out["taux_chomage"] = pct("chom", "act")
+    out["part_residences_secondaires"] = pct("rsec", "log")
+    out["part_logements_vacants"] = pct("vac", "log")
+    out["part_proprietaires"] = pct("prop", "rp")
+    out["part_plus_65"] = pct("pop65", "pop_age")
     out["evolution_population"] = (((g["pop"] / g["pop_old"]) ** (1 / n_years) - 1) * 100).where(
         (g["pop_old"] > 0) & (g["pop"] > 0))
 
     cols = list(out.columns)
-    rnd = {"revenu_median": 0}
+    rnd = {"revenu_median": 0, "evolution_population": 3}
     rows = []
     for c in load_communes():
         code = c["code_insee"]
@@ -128,46 +157,51 @@ def main():
         rows.append(r)
     write_csv("socio", rows, cols)
 
-    RP, RPO, FI = f"20{rp}", f"20{rp_old}", f"20{fi}"
-    src_rp = f"INSEE, recensement de la population {RP} (exploitation principale), base du dossier complet"
-    src_fi = f"INSEE, Filosofi {FI} (fichier localisé social et fiscal), base du dossier complet"
-    secret_fi = (" Non diffusé (vide) pour les communes de moins de 50 ménages / 100 personnes "
-                 "fiscales (secret statistique), ainsi que pour Mayotte, la Guadeloupe et la Guyane selon les millésimes.")
+    src_rp = (f"INSEE, recensement de la population {RP} (exploitation principale, géographie au "
+              f"01/01/2026), via l'API Melodi")
+    src_fi = (f"INSEE, Filosofi {FILOSOFI} (dispositif Fichier localisé social et fiscal, géographie au "
+              f"01/01/2026), via l'API Melodi (DS_FILOSOFI_CC)")
     write_indicators("socio", [
         {"id": "revenu_median", "label": "Revenu médian", "group": "Économie", "unit": "€/an/UC",
          "type": "number", "better": None, "decimals": 0,
-         "description": f"Médiane du revenu disponible par unité de consommation en {FI} (niveau de vie "
-                        f"annuel, après impôts et prestations sociales)." + secret_fi, "source": src_fi},
+         "description": f"Médiane du revenu disponible par unité de consommation (niveau de vie annuel, "
+                        f"après impôts et prestations sociales) en {FILOSOFI}. Vide pour les communes sous "
+                        f"secret statistique (moins de 50 ménages fiscaux environ) et hors champ Filosofi "
+                        f"(Mayotte, une partie des DOM).", "source": src_fi},
         {"id": "taux_pauvrete", "label": "Taux de pauvreté", "group": "Économie", "unit": "%",
          "type": "number", "better": "lower", "decimals": 1,
-         "description": f"Part de la population vivant sous le seuil de pauvreté (60 % du niveau de vie "
-                        f"médian national) en {FI}. Diffusé seulement pour les communes d'au moins "
-                        f"1 000 ménages fiscaux environ (secret statistique), vide sinon.", "source": src_fi},
+         "description": f"Part de la population vivant sous le seuil de pauvreté monétaire (60 % du niveau "
+                        f"de vie médian national) en {FILOSOFI}. Diffusé par l'INSEE seulement pour les "
+                        f"communes d'au moins 1 000 ménages fiscaux environ : vide pour la plupart des "
+                        f"petites communes.", "source": src_fi},
         {"id": "taux_chomage", "label": "Taux de chômage", "group": "Économie", "unit": "%",
          "type": "number", "better": "lower", "decimals": 1,
          "description": f"Chômeurs de 15-64 ans / actifs de 15-64 ans, au sens du recensement {RP} "
-                        f"(déclaratif, différent du taux BIT).", "source": src_rp},
+                        f"(déclaratif, généralement plus élevé que le taux de chômage BIT).",
+         "source": src_rp + " (DS_RP_EMPLOI_LR_PRINC)"},
         {"id": "part_residences_secondaires", "label": "Résidences secondaires", "group": "Démographie",
          "unit": "%", "type": "number", "better": None, "decimals": 1,
          "description": f"Part des résidences secondaires et logements occasionnels dans l'ensemble des "
-                        f"logements (recensement {RP}).", "source": src_rp},
+                        f"logements (recensement {RP}).", "source": src_rp + " (DS_RP_SERIE_HISTORIQUE)"},
         {"id": "part_logements_vacants", "label": "Logements vacants", "group": "Démographie",
          "unit": "%", "type": "number", "better": None, "decimals": 1,
          "description": f"Part des logements vacants dans l'ensemble des logements (recensement {RP}).",
-         "source": src_rp},
+         "source": src_rp + " (DS_RP_SERIE_HISTORIQUE)"},
         {"id": "part_proprietaires", "label": "Propriétaires occupants", "group": "Démographie",
          "unit": "%", "type": "number", "better": None, "decimals": 1,
          "description": f"Part des résidences principales occupées par leur propriétaire (recensement {RP}).",
-         "source": src_rp},
+         "source": src_rp + " (DS_RP_LOGEMENT_PRINC)"},
         {"id": "part_plus_65", "label": "Part des 65 ans et plus", "group": "Démographie",
          "unit": "%", "type": "number", "better": None, "decimals": 1,
-         "description": f"Part des personnes de 65 ans ou plus dans la population (recensement {RP}).",
-         "source": src_rp},
+         "description": f"Part des personnes de 65 ans ou plus dans la population municipale "
+                        f"(recensement {RP}).", "source": src_rp + " (DS_RP_POPULATION_PRINC)"},
         {"id": "evolution_population", "label": "Évolution de la population", "group": "Démographie",
          "unit": "%/an", "type": "number", "better": None, "decimals": 2,
-         "description": f"Taux de variation annuel moyen de la population municipale entre {RPO} et {RP} "
-                        f"(géographie communale en vigueur).",
-         "source": f"INSEE, recensements de la population {RPO} et {RP}, base du dossier complet"},
+         "description": f"Taux de variation annuel moyen de la population municipale entre les "
+                        f"recensements {RP_OLD} et {RP} ({n_years} ans), à géographie communale constante "
+                        f"(01/01/2026).",
+         "source": f"INSEE, recensements de la population {RP_OLD} et {RP}, série historique "
+                   f"(DS_RP_SERIE_HISTORIQUE), via l'API Melodi"},
     ])
 
     n = len(rows)

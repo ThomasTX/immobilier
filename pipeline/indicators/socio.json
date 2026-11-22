@@ -1,0 +1,90 @@
+[
+  {
+    "id": "revenu_median",
+    "label": "Revenu médian",
+    "group": "Économie",
+    "unit": "€/an/UC",
+    "type": "number",
+    "better": null,
+    "decimals": 0,
+    "description": "Médiane du revenu disponible par unité de consommation (niveau de vie annuel, après impôts et prestations sociales) en 2023. Vide pour les communes sous secret statistique (moins de 50 ménages fiscaux environ) et hors champ Filosofi (Mayotte, une partie des DOM).",
+    "source": "INSEE, Filosofi 2023 (dispositif Fichier localisé social et fiscal, géographie au 01/01/2026), via l'API Melodi (DS_FILOSOFI_CC)"
+  },
+  {
+    "id": "taux_pauvrete",
+    "label": "Taux de pauvreté",
+    "group": "Économie",
+    "unit": "%",
+    "type": "number",
+    "better": "lower",
+    "decimals": 1,
+    "description": "Part de la population vivant sous le seuil de pauvreté monétaire (60 % du niveau de vie médian national) en 2023. Diffusé par l'INSEE seulement pour les communes d'au moins 1 000 ménages fiscaux environ : vide pour la plupart des petites communes.",
+    "source": "INSEE, Filosofi 2023 (dispositif Fichier localisé social et fiscal, géographie au 01/01/2026), via l'API Melodi (DS_FILOSOFI_CC)"
+  },
+  {
+    "id": "taux_chomage",
+    "label": "Taux de chômage",
+    "group": "Économie",
+    "unit": "%",
+    "type": "number",
+    "better": "lower",
+    "decimals": 1,
+    "description": "Chômeurs de 15-64 ans / actifs de 15-64 ans, au sens du recensement 2023 (déclaratif, généralement plus élevé que le taux de chômage BIT).",
+    "source": "INSEE, recensement de la population 2023 (exploitation principale, géographie au 01/01/2026), via l'API Melodi (DS_RP_EMPLOI_LR_PRINC)"
+  },
+  {
+    "id": "part_residences_secondaires",
+    "label": "Résidences secondaires",
+    "group": "Démographie",
+    "unit": "%",
+    "type": "number",
+    "better": null,
+    "decimals": 1,
+    "description": "Part des résidences secondaires et logements occasionnels dans l'ensemble des logements (recensement 2023).",
+    "source": "INSEE, recensement de la population 2023 (exploitation principale, géographie au 01/01/2026), via l'API Melodi (DS_RP_SERIE_HISTORIQUE)"
+  },
+  {
+    "id": "part_logements_vacants",
+    "label": "Logements vacants",
+    "group": "Démographie",
+    "unit": "%",
+    "type": "number",
+    "better": null,
+    "decimals": 1,
+    "description": "Part des logements vacants dans l'ensemble des logements (recensement 2023).",
+    "source": "INSEE, recensement de la population 2023 (exploitation principale, géographie au 01/01/2026), via l'API Melodi (DS_RP_SERIE_HISTORIQUE)"
+  },
+  {
+    "id": "part_proprietaires",
+    "label": "Propriétaires occupants",
+    "group": "Démographie",
+    "unit": "%",
+    "type": "number",
+    "better": null,
+    "decimals": 1,
+    "description": "Part des résidences principales occupées par leur propriétaire (recensement 2023).",
+    "source": "INSEE, recensement de la population 2023 (exploitation principale, géographie au 01/01/2026), via l'API Melodi (DS_RP_LOGEMENT_PRINC)"
+  },
+  {
+    "id": "part_plus_65",
+    "label": "Part des 65 ans et plus",
+    "group": "Démographie",
+    "unit": "%",
+    "type": "number",
+    "better": null,
+    "decimals": 1,
+    "description": "Part des personnes de 65 ans ou plus dans la population municipale (recensement 2023).",
+    "source": "INSEE, recensement de la population 2023 (exploitation principale, géographie au 01/01/2026), via l'API Melodi (DS_RP_POPULATION_PRINC)"
+  },
+  {
+    "id": "evolution_population",
+    "label": "Évolution de la population",
+    "group": "Démographie",
+    "unit": "%/an",
+    "type": "number",
+    "better": null,
+    "decimals": 2,
+    "description": "Taux de variation annuel moyen de la population municipale entre les recensements 2017 et 2023 (6 ans), à géographie communale constante (01/01/2026).",
+    "source": "INSEE, recensements de la population 2017 et 2023, série historique (DS_RP_SERIE_HISTORIQUE), via l'API Melodi"
+  }
+]

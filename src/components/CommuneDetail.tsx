@@ -131,6 +131,9 @@ export function CommuneDetail({
       {[...groups.entries()].map(([g, inds]) => (
         <div key={g} className="section">
           <h3>{g}</h3>
+          {g === "Sécurité" && (data.values.population?.[i] ?? 0) < 2000 && (
+            <p className="muted small">⚠ Petite commune : quelques faits suffisent à faire varier fortement ces taux.</p>
+          )}
           <table className="kv">
             <tbody>
               {inds.map((ind) => {

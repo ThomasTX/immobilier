@@ -7,7 +7,7 @@
     "type": "number",
     "better": "lower",
     "decimals": 1,
-    "description": "Cambriolages de logement (résidences principales et secondaires) enregistrés en 2025, pour 1 000 logements. Valeur vide si la commune est sous secret statistique (données non diffusées par le SSMSI lorsque 5 faits ou moins ont été enregistrés 3 années successives), ce qui concerne la plupart des petites communes. Lieu de commission des faits.",
+    "description": "Cambriolages de logement (résidences principales et secondaires) enregistrés en 2025, pour 1 000 logements. Lieu de commission des faits. Le SSMSI ne diffuse la valeur communale que si plus de 5 faits ont été enregistrés chacune des 3 dernières années, ou aucun fait 3 années de suite (valeur 0) ; sinon (secret statistique, surtout petites communes) la valeur est vide. Taux volatils pour les très petites communes.",
     "source": "SSMSI (ministère de l'Intérieur), base statistique communale de la délinquance enregistrée par la police et la gendarmerie nationales, année 2025 (data.gouv.fr) ; populations RP 2023, logements RP 2022"
   },
   {
@@ -18,7 +18,7 @@
     "type": "number",
     "better": "lower",
     "decimals": 1,
-    "description": "Victimes de violences physiques hors cadre familial enregistrées en 2025 (coups et blessures volontaires, etc.), pour 1 000 habitants. Valeur vide si la commune est sous secret statistique (données non diffusées par le SSMSI lorsque 5 faits ou moins ont été enregistrés 3 années successives), ce qui concerne la plupart des petites communes. Lieu de commission des faits.",
+    "description": "Victimes de violences physiques hors cadre familial enregistrées en 2025 (coups et blessures volontaires, etc.), pour 1 000 habitants. Lieu de commission des faits. Le SSMSI ne diffuse la valeur communale que si plus de 5 faits ont été enregistrés chacune des 3 dernières années, ou aucun fait 3 années de suite (valeur 0) ; sinon (secret statistique, surtout petites communes) la valeur est vide. Taux volatils pour les très petites communes.",
     "source": "SSMSI (ministère de l'Intérieur), base statistique communale de la délinquance enregistrée par la police et la gendarmerie nationales, année 2025 (data.gouv.fr) ; populations RP 2023, logements RP 2022"
   },
   {
@@ -29,7 +29,7 @@
     "type": "number",
     "better": "lower",
     "decimals": 1,
-    "description": "Véhicules volés (automobiles, deux-roues motorisés) enregistrés en 2025, pour 1 000 habitants (hors vols dans ou sur les véhicules). Valeur vide si la commune est sous secret statistique (données non diffusées par le SSMSI lorsque 5 faits ou moins ont été enregistrés 3 années successives), ce qui concerne la plupart des petites communes. Lieu de commission des faits.",
+    "description": "Véhicules volés (automobiles, deux-roues motorisés) enregistrés en 2025, pour 1 000 habitants (hors vols dans ou sur les véhicules). Lieu de commission des faits. Le SSMSI ne diffuse la valeur communale que si plus de 5 faits ont été enregistrés chacune des 3 dernières années, ou aucun fait 3 années de suite (valeur 0) ; sinon (secret statistique, surtout petites communes) la valeur est vide. Taux volatils pour les très petites communes.",
     "source": "SSMSI (ministère de l'Intérieur), base statistique communale de la délinquance enregistrée par la police et la gendarmerie nationales, année 2025 (data.gouv.fr) ; populations RP 2023, logements RP 2022"
   },
   {
@@ -40,7 +40,7 @@
     "type": "number",
     "better": "lower",
     "decimals": 1,
-    "description": "Destructions et dégradations volontaires enregistrées en 2025, pour 1 000 habitants. Valeur vide si la commune est sous secret statistique (données non diffusées par le SSMSI lorsque 5 faits ou moins ont été enregistrés 3 années successives), ce qui concerne la plupart des petites communes. Lieu de commission des faits.",
+    "description": "Destructions et dégradations volontaires enregistrées en 2025, pour 1 000 habitants. Lieu de commission des faits. Le SSMSI ne diffuse la valeur communale que si plus de 5 faits ont été enregistrés chacune des 3 dernières années, ou aucun fait 3 années de suite (valeur 0) ; sinon (secret statistique, surtout petites communes) la valeur est vide. Taux volatils pour les très petites communes.",
     "source": "SSMSI (ministère de l'Intérieur), base statistique communale de la délinquance enregistrée par la police et la gendarmerie nationales, année 2025 (data.gouv.fr) ; populations RP 2023, logements RP 2022"
   },
   {
@@ -52,7 +52,7 @@
     "better": "lower",
     "decimals": 1,
     "scale": "log",
-    "description": "Indice synthétique simple : nombre total de cambriolages de logement, violences physiques hors cadre familial, vols de véhicules et destructions-dégradations enregistrés en 2025, pour 1 000 habitants. Renseigné seulement si les 4 catégories sont diffusées. Valeur vide si la commune est sous secret statistique (données non diffusées par le SSMSI lorsque 5 faits ou moins ont été enregistrés 3 années successives), ce qui concerne la plupart des petites communes. Lieu de commission des faits.",
+    "description": "Indice synthétique simple : nombre total de cambriolages de logement, violences physiques hors cadre familial, vols de véhicules et destructions-dégradations enregistrés en 2025, pour 1 000 habitants. Renseigné seulement si les 4 catégories sont diffusées. Lieu de commission des faits. Le SSMSI ne diffuse la valeur communale que si plus de 5 faits ont été enregistrés chacune des 3 dernières années, ou aucun fait 3 années de suite (valeur 0) ; sinon (secret statistique, surtout petites communes) la valeur est vide. Taux volatils pour les très petites communes.",
     "source": "SSMSI (ministère de l'Intérieur), base statistique communale de la délinquance enregistrée par la police et la gendarmerie nationales, année 2025 (data.gouv.fr) ; populations RP 2023, logements RP 2022"
   }
 ]
