@@ -7,8 +7,8 @@ On retient la dernière année disponible de la base communale (CSV compressé).
 Règles :
   - taux pour 1 000 habitants (1 000 logements pour les cambriolages), recalculés
     à partir des nombres et des dénominateurs INSEE fournis dans la base ;
-  - communes « ndiff » (moins de 5 faits sur 3 années successives, secret
-    statistique) → valeur vide ;
+  - communes « ndiff » (secret statistique : diffusion seulement si > 5 faits
+    chacune des 3 dernières années, ou 0 fait 3 ans de suite) → valeur vide ;
   - Paris/Lyon/Marseille : la base fournit déjà la ligne de la commune entière
     (75056, 69123, 13055) en plus des arrondissements ; on l'utilise en priorité,
     sinon on agrège les arrondissements (somme des nombres / somme des dénominateurs).
@@ -135,9 +135,10 @@ def main():
     src = (f"SSMSI (ministère de l'Intérieur), base statistique communale de la délinquance enregistrée "
            f"par la police et la gendarmerie nationales, année {annee} (data.gouv.fr) ; "
            f"populations RP {pop_mil}, logements RP {log_mil}")
-    secret = (" Valeur vide si la commune est sous secret statistique (données non diffusées par le SSMSI "
-              "lorsque 5 faits ou moins ont été enregistrés 3 années successives), ce qui concerne la plupart "
-              "des petites communes. Lieu de commission des faits.")
+    secret = (" Lieu de commission des faits. Le SSMSI ne diffuse la valeur communale que si plus de 5 faits "
+              "ont été enregistrés chacune des 3 dernières années, ou aucun fait 3 années de suite (valeur 0) ; "
+              "sinon (secret statistique, surtout petites communes) la valeur est vide. Taux volatils pour les "
+              "très petites communes.")
     meta = [
         {"id": "cambriolages_1000", "label": "Cambriolages de logement", "group": "Sécurité",
          "unit": "‰ logements", "type": "number", "better": "lower", "decimals": 1,
