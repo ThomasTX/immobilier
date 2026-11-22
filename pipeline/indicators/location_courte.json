@@ -1,0 +1,72 @@
+[
+  {
+    "id": "str_nb_annonces",
+    "label": "Annonces de location courte durée",
+    "group": "Location courte durée",
+    "unit": "annonces",
+    "type": "number",
+    "better": null,
+    "decimals": 0,
+    "scale": "log",
+    "source": "Inside Airbnb (insideairbnb.com), licence CC BY 4.0 ; zones : Lyon (extraction du 17/09/2026), Paris (extraction du 16/09/2026), Bordeaux (extraction du 17/09/2026), Pays Basque (extraction du 19/09/2026)",
+    "description": "Nombre d'annonces Airbnb actives (logements entiers, chambres privées et partagées ; hors chambres d'hôtel). Couverture limitée aux zones publiées par Inside Airbnb pour la France (Lyon, Paris, Bordeaux, Pays Basque) : vide ailleurs. Annonces actives = au moins un avis dans les 12 mois précédant l'extraction, séjour minimum < 30 nuits, rattachées à la commune par leurs coordonnées (floutées d'environ 150 m par Airbnb) ; commune publiée à partir de 10 annonces actives. "
+  },
+  {
+    "id": "str_annonces_1000_hab",
+    "label": "Annonces courte durée pour 1 000 habitants",
+    "group": "Location courte durée",
+    "unit": "‰ hab.",
+    "type": "number",
+    "better": null,
+    "decimals": 1,
+    "scale": "log",
+    "source": "Inside Airbnb (insideairbnb.com), licence CC BY 4.0 ; zones : Lyon (extraction du 17/09/2026), Paris (extraction du 16/09/2026), Bordeaux (extraction du 17/09/2026), Pays Basque (extraction du 19/09/2026) ; population municipale INSEE",
+    "description": "Annonces Airbnb actives pour 1 000 habitants (population municipale) : indicateur de pression touristique sur le parc de logements. Couverture limitée aux zones publiées par Inside Airbnb pour la France (Lyon, Paris, Bordeaux, Pays Basque) : vide ailleurs. Annonces actives = au moins un avis dans les 12 mois précédant l'extraction, séjour minimum < 30 nuits, rattachées à la commune par leurs coordonnées (floutées d'environ 150 m par Airbnb) ; commune publiée à partir de 10 annonces actives. "
+  },
+  {
+    "id": "str_prix_nuit",
+    "label": "Prix par nuit (logement entier)",
+    "group": "Location courte durée",
+    "unit": "€/nuit",
+    "type": "number",
+    "better": "higher",
+    "decimals": 0,
+    "scale": "log",
+    "source": "Inside Airbnb (insideairbnb.com), licence CC BY 4.0 ; zones : Lyon (extraction du 17/09/2026), Paris (extraction du 16/09/2026), Bordeaux (extraction du 17/09/2026), Pays Basque (extraction du 19/09/2026)",
+    "description": "Prix par nuit médian affiché des logements entiers actifs à la date d'extraction (hors frais de ménage et de service ; prix hors [10 ; 5000] € écartés ; vide si moins de 5 prix connus). Couverture limitée aux zones publiées par Inside Airbnb pour la France (Lyon, Paris, Bordeaux, Pays Basque) : vide ailleurs. Annonces actives = au moins un avis dans les 12 mois précédant l'extraction, séjour minimum < 30 nuits, rattachées à la commune par leurs coordonnées (floutées d'environ 150 m par Airbnb) ; commune publiée à partir de 10 annonces actives. "
+  },
+  {
+    "id": "str_occupation_pct",
+    "label": "Taux d'occupation estimé (courte durée)",
+    "group": "Location courte durée",
+    "unit": "%",
+    "type": "number",
+    "better": "higher",
+    "decimals": 0,
+    "source": "Inside Airbnb (insideairbnb.com), licence CC BY 4.0 ; zones : Lyon (extraction du 17/09/2026), Paris (extraction du 16/09/2026), Bordeaux (extraction du 17/09/2026), Pays Basque (extraction du 19/09/2026)",
+    "description": "Occupation médiane estimée des logements entiers actifs (toutes annonces actives si moins de 5 logements entiers), modèle « San Francisco » d'Inside Airbnb : nuits réservées = avis des 12 derniers mois / 50% (part des séjours laissant un avis) × durée de séjour (3 nuits, ou le séjour minimum s'il est plus long), plafonné à 70% de l'année. Estimation grossière : ignore les réservations sans avis, les autres plateformes et les périodes bloquées par l'hôte. Couverture limitée aux zones publiées par Inside Airbnb pour la France (Lyon, Paris, Bordeaux, Pays Basque) : vide ailleurs. Annonces actives = au moins un avis dans les 12 mois précédant l'extraction, séjour minimum < 30 nuits, rattachées à la commune par leurs coordonnées (floutées d'environ 150 m par Airbnb) ; commune publiée à partir de 10 annonces actives. "
+  },
+  {
+    "id": "str_revenu_annuel",
+    "label": "Revenu annuel brut estimé (courte durée)",
+    "group": "Location courte durée",
+    "unit": "€/an",
+    "type": "number",
+    "better": "higher",
+    "decimals": 0,
+    "scale": "log",
+    "source": "Inside Airbnb (insideairbnb.com), licence CC BY 4.0 ; zones : Lyon (extraction du 17/09/2026), Paris (extraction du 16/09/2026), Bordeaux (extraction du 17/09/2026), Pays Basque (extraction du 19/09/2026)",
+    "description": "Revenu annuel brut médian estimé des logements entiers actifs = prix par nuit affiché × nuits réservées estimées (modèle « San Francisco » d'Inside Airbnb : nuits réservées = avis des 12 derniers mois / 50% (part des séjours laissant un avis) × durée de séjour (3 nuits, ou le séjour minimum s'il est plus long), plafonné à 70% de l'année). Vide si moins de 5 logements entiers avec prix. Couverture limitée aux zones publiées par Inside Airbnb pour la France (Lyon, Paris, Bordeaux, Pays Basque) : vide ailleurs. Annonces actives = au moins un avis dans les 12 mois précédant l'extraction, séjour minimum < 30 nuits, rattachées à la commune par leurs coordonnées (floutées d'environ 150 m par Airbnb) ; commune publiée à partir de 10 annonces actives. Indicatif : brut, avant charges, ménage, frais de plateforme, fiscalité et vacance ; la location courte durée est encadrée localement (autorisation de changement d'usage, compensation à Paris et dans d'autres grandes villes, quotas, plafond de 120 nuits/an — 90 dans certaines communes — pour une résidence principale)."
+  },
+  {
+    "id": "str_rendement_brut_pct",
+    "label": "Rendement brut courte durée (T2, indicatif)",
+    "group": "Location courte durée",
+    "unit": "%",
+    "type": "number",
+    "better": "higher",
+    "decimals": 1,
+    "source": "Inside Airbnb (insideairbnb.com), licence CC BY 4.0 ; zones : Lyon (extraction du 17/09/2026), Paris (extraction du 16/09/2026), Bordeaux (extraction du 17/09/2026), Pays Basque (extraction du 19/09/2026) ; DVF (DGFiP) via « Statistiques DVF » Etalab (prix médian au m² des appartements)",
+    "description": "Rendement brut indicatif d'un T2 de 45 m² loué en courte durée = revenu annuel brut estimé / (prix médian au m² des appartements × 45 m²) × 100. Le revenu est celui d'un logement entier médian de la commune (toutes tailles), pas spécifiquement d'un T2. Indicatif : brut, avant charges, ménage, frais de plateforme, fiscalité et vacance ; la location courte durée est encadrée localement (autorisation de changement d'usage, compensation à Paris et dans d'autres grandes villes, quotas, plafond de 120 nuits/an — 90 dans certaines communes — pour une résidence principale)."
+  }
+]

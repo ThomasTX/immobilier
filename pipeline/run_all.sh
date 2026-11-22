@@ -4,11 +4,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 pipeline/sources/communes.py
+python3 pipeline/build_geometry.py   # contours (aussi utilisés par location_courte.py)
+python3 pipeline/sources/immobilier.py
 for s in pipeline/sources/*.py; do
-  [ "$(basename "$s")" = "communes.py" ] && continue
+  case "$(basename "$s")" in communes.py|immobilier.py) continue ;; esac
   echo "== $s"
   python3 "$s" || echo "!! échec de $s (les autres sources continuent)"
 done
 python3 pipeline/build_transit.py
-python3 pipeline/build_geometry.py
 python3 pipeline/build_communes.py
