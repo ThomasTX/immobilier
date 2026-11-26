@@ -1,5 +1,7 @@
 # 🏡 Où acheter ? Recherche immobilière multicritère, France entière
 
+> 🧪 **Version de test en ligne : [immoscan-opal.vercel.app](https://immoscan-opal.vercel.app)**. Aucune installation nécessaire.
+
 Une application web qui croise **tous vos critères** pour trouver les communes, puis les biens, qui vous conviennent :
 
 - **Isochrones voiture et train.**
